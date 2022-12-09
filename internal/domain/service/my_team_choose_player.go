@@ -3,27 +3,25 @@ package service
 import (
 	"errors"
 
-	"github.com/GuiRissato/Imersao10-consolidacao/internal/domain/entity"
+	"github.com/GuiRissato/ms-consolidacao/internal/domain/entity"
 )
 
-func ChoosePlayers(myTeam entity.MyTeam, players []entity.Player) error{
+var errNotEnoughMoney = errors.New("not enough money")
+
+func ChoosePlayers(myTeam *entity.MyTeam, myPlayers []entity.Player, players []entity.Player) error{
 	// venda e compra de jogadores
 	totalCost :=0.0
-	totalEarned  := 0.0
+	totalEarned  := calculateTotalEarned(myPlayers,players)
 
 	for _, player := range players{
-		// venda
-		if playerInMyTeam(player, myTeam) && !playerInPlayerList(player, &players){
-			totalEarned += player.Price
-		}
-		//compra
-		if !playerInMyTeam(player, myTeam) && playerInPlayerList(player, &players){
+		
+		if !playerInMyTeam(player, *myTeam) && playerInPlayersList(player, players) {
 			totalCost += player.Price
 		}
 	}
 
-	if totalCost > myTeam.Score + totalEarned{
-		return errors.New("not enough money")
+	if totalCost > myTeam.Score+totalEarned {
+		return errNotEnoughMoney
 	}
 
 	myTeam.Score += totalEarned - totalCost
@@ -45,11 +43,21 @@ func playerInMyTeam(player entity.Player, myTeam entity.MyTeam) bool{
 	return false
 }
 
-func playerInPlayerList(player entity.Player, players *[]entity.Player) bool{
-	for _,p := range *players{
+func playerInPlayersList(player entity.Player, players []entity.Player) bool{
+	for _,p := range players{
 		if player.ID	== p.ID{
 			return true
 		}
 	}
 	return false
+}
+
+func calculateTotalEarned(myPlayers []entity.Player, players []entity.Player) float64 {
+	var totalEarned float64
+	for _, myPlayer := range myPlayers {
+		if !playerInPlayersList(myPlayer, players) {
+			totalEarned += myPlayer.Price
+		}
+	}
+	return totalEarned
 }

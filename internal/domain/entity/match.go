@@ -10,7 +10,7 @@ type MatchResult struct{
 	teamBScore int
 }
 
-func NewMatchResilt(teamAScore, teamBScore int) *MatchResult{
+func NewMatchResult(teamAScore, teamBScore int) *MatchResult{
 	return &MatchResult{
 		teamAScore: teamAScore,
 		teamBScore: teamBScore,
@@ -31,7 +31,7 @@ type Match struct {
 	Date time.Time
 	Status string
 	Result MatchResult
-	ACtions []GameAction
+	Actions []GameAction
 }
 
 func NewMatch(id string,teamA *Team, teamB *Team, date time.Time) *Match{

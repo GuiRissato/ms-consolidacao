@@ -1,4 +1,4 @@
-module github.com/GuiRissato/Imersao10-consolidacao
+module github.com/GuiRissato/ms-consolidacao
 
 go 1.19
 
